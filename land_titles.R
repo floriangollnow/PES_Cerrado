@@ -35,7 +35,7 @@ bb <- st_bbox(munis_land_p)
 gg_title<- ggplot ()+
   geom_sf(data=munis_land_p, aes(fill=land_p_perc), color=NA)+
   geom_sf(data=states, color = "white", fill = NA, size=0.5)+
-  scale_fill_viridis_c( name="Land owned in %")+
+  scale_fill_viridis_c( name="Farms owned in %")+
   coord_sf(xlim = c(bb[1], bb[3]), ylim = c(bb[2], bb[4]), expand = FALSE) +
   theme(legend.position = "top", axis.title.x=element_blank(),axis.title.y=element_blank())
 gg_title

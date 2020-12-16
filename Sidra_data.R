@@ -33,8 +33,8 @@ write_rds (prod_tons, file.path(out, "prod_tons_soy_2014_2019.rds"))
 # family farms
 info_sidra(6778, wb=FALSE)
 family_farms <- get_sidra(6778,variable = 183, period = c("2017"), geo="City", 
-                          classific= "c829", 
-                          category = "all")
+                          classific= c("c829", "c220"), 
+                          category = list(c("46304","46303"),c(as.character (c(111543:111558,41139, 40645 )))))
 
 family_farms<-family_farms %>%  as_tibble ()%>%  select (`Município (Código)`, `Município`, Ano,`Tipologia` ,`Unidade de Medida`, Valor)
 
@@ -42,6 +42,7 @@ write_rds (family_farms, file.path(out, "family_farms_2017.rds"))
 
 
 # land tenure 
+info_sidra(6778, wb=FALSE)
 land_tenure <- get_sidra(6778,variable = 183, period = c("2017"), geo="City", 
                           classific= "c218", 
                           category = "all")
