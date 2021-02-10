@@ -27,7 +27,7 @@ boundary <- boundary %>%  st_transform (crs = "+proj=laea +lat_0=-10 +lon_0=-70 
 bb_st <- st_as_sfc(st_bbox(boundary))
 gg_world<- ggplot() +
   geom_sf(data=world)+
-  geom_sf(data=bb_st, fill=NA, color="red") +
+  geom_sf(data=bb_st, fill=NA, color="red", size=1.5) +
   coord_sf(xlim = c(bb[1], bb[3]), ylim = c(bb[2], bb[4]))+
   theme_minimal()
 gg_world

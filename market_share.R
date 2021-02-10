@@ -18,18 +18,23 @@ states <- read_rds (file.path(out, "ibge","StatesBR_WGS84.rds"))
 munis <- munis %>% ms_simplify()
 states <- states %>% ms_simplify()
 
+matop <- read_rds ( file.path(out, "Matopiba","Matopiba_WGS84.rds"))
+matop <- matop %>% mutate(Matopiba="")
+
 munis_zdc_p <- munis %>% left_join(trase_2018_zdc, by = c("cd_geocmu"="GEOCODE") )
 
 bb <- st_bbox(munis_zdc_p)
 
 gg_zdc<- ggplot ()+
   geom_sf(data=munis_zdc_p, aes(fill=ZDC_perc),color=NA)+
-  geom_sf(data=states, color = "white", fill = NA, size=0.5)+
-  scale_fill_viridis_c( name="ZDC market share %")+
+  geom_sf(data=states, color = "grey60", fill = NA, size=0.5)+
+  geom_sf(data=matop, aes(color=Matopiba), fill = NA, size=0.7, show.legend = 'line')+
+  scale_fill_viridis_c( name="ZDC market\nshare in %")+
   coord_sf(xlim = c(bb[1], bb[3]), ylim = c(bb[2], bb[4]), expand = FALSE) +
-  theme(legend.position = "top", axis.title.x=element_blank(),axis.title.y=element_blank())
+  theme_bw()+
+  theme(legend.position = "top", axis.title.x=element_blank(),axis.title.y=element_blank())+
+  guides(fill = guide_colorbar(order = 1),col = guide_legend(order = 2))## ,legend.box="vertical"
 gg_zdc
 write_rds(gg_zdc, file.path(out,"ggplots","gg_zdc.rds"))
-ggsave (file.path(out, "map_title.png"))
 
 ggsave (file.path(out, "map_ZDC.png"))

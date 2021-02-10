@@ -42,12 +42,19 @@ write_rds (family_farms, file.path(out, "family_farms_2017.rds"))
 
 
 # land tenure 
-info_sidra(6778, wb=FALSE)
 land_tenure <- get_sidra(6778,variable = 183, period = c("2017"), geo="City", 
                           classific= "c218", 
                           category = "all")
+unique( land_tenure$`Condição do produtor em relação às terras`)
 land_tenure<-land_tenure%>%  as_tibble ()%>%  select (`Município (Código)`, `Município`, Ano,`Condição do produtor em relação às terras` ,`Unidade de Medida`, Valor)
 write_rds (land_tenure, file.path(out, "land_tenure_2017.rds"))
+
+# soy farms 
+info_sidra(6957, wb=FALSE) # produces error - downloaded from webside!
+soy_f <- read_csv(file.path(out, "sidra_download/tabela6957_tot_soja.csv"),skip = 5,n_max = I(5561-6), col_types = "cccccdcdc")
+#soy_f <- soy_f %>% replace_na(list(`Soja em grão`=0))
+write_rds (soy_f, file.path(out, "soy_farms_2017.rds"))
+
 
 # gini coefficient
 # Tabela 1722 - Índice de Gini da distribuição do rendimento nominal mensal das pessoas de 10 anos ou mais de idade, com rendimento, por situação do domicílio e sexo (Vide Notas)

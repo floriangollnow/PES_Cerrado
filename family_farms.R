@@ -16,6 +16,8 @@ f_farms <- farms %>% filter (Tipologia=="Agricultura familiar - sim") %>% rename
 f_farms <- f_farms %>% left_join(t_farms)
 f_farms <- f_farms %>% mutate (fam_perc = (Valor_fam/Valor_total)*100)
 
+mean_ffarms <- f_farms %>% summarise(meanff = median(fam_perc,na.rm=TRUE))
+
 munis <- read_sf (file.path(out, "municipalities_cerrado_biome","municipalities_cerrado_biome_wgs84.shp"))
 munis <- munis %>% ms_simplify()
 

@@ -25,6 +25,7 @@ deforestation<- read_sf(file.path (out, "yearly_deforestation_2002_2019_cerrado_
 deforestation <-  deforestation %>% st_transform(crs=4327)
 deforestation <- deforestation %>% group_by(year, main_class) %>%  summarise (area_km=sum(area_km))
 deforestation_s <- deforestation %>% ms_simplify()
+write_rds (deforestation_s,file.path (out, "yearly_deforestation_2002_2019_cerrado_biome", "yearly_deforestation_2000_2019_cerrado_biome_simplified.rds" ))
 
 ggplot() +
   geom_sf(data=deforestation_s, aes (fill=year),color=NA) +

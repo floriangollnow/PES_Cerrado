@@ -16,13 +16,10 @@ out <- '/Users/floriangollnow/Dropbox/PaperRachael/Data'
 # partner
 #?
 
-soy_f <- read_rds ( file.path(out, "sidra/soy_farms.rds"))
+soy_f <- read_rds ( file.path(out, "sidra/soy_farms_2017.rds"))
 unique(soy_f$`Soja em grão`)
 
-land_t <- land %>% filter(`Condição do produtor em relação às terras`=="Total") %>% rename(Valor_total = Valor) %>% select (`Município (Código)`,Valor_total )
-land_p <- land %>% filter (`Condição do produtor em relação às terras`=="Proprietário(a)") %>% rename(Valor_p = Valor)%>% select (`Município (Código)`,Valor_p )
-land_p <- land_p %>% left_join(land_t)
-land_p <- land_p %>% mutate (land_p_perc = (Valor_p/Valor_total)*100)
+soy_f_p <- soy_f %>% mutate (soy_est_perc = (`Soja em grão`/Total)*100)
 
 munis <- read_sf (file.path(out, "municipalities_cerrado_biome","municipalities_cerrado_biome_wgs84.shp"))
 states <- read_rds (file.path(out, "ibge","StatesBR_WGS84.rds"))
@@ -31,19 +28,19 @@ munis <- munis %>% ms_simplify()
 states <- states %>% ms_simplify()
 matop <- read_rds ( file.path(out, "Matopiba","Matopiba_WGS84.rds"))
 matop <- matop %>% mutate(Matopiba="")
-munis_land_p <- munis %>% left_join(land_p, by = c("cd_geocmu"="Município (Código)") )
+munis_soy_p <- munis %>% left_join(soy_f_p, by = c("cd_geocmu"="Cód.") )
 
-bb <- st_bbox(munis_land_p)
-gg_title<- ggplot ()+
-  geom_sf(data=munis_land_p, aes(fill=land_p_perc), color=NA)+
+bb <- st_bbox(munis_soy_p)
+gg_soyfarms<- ggplot ()+
+  geom_sf(data=munis_soy_p, aes(fill=soy_est_perc), color=NA)+
   geom_sf(data=states, color = "grey60", fill = NA, size=0.5)+
   geom_sf(data=matop, aes(color=Matopiba), fill = NA, size=0.7, show.legend = 'line')+
-  scale_fill_viridis_c( name="Farms owned\nin %")+
+  scale_fill_viridis_c( name="Soy farms\nin %", limits=c(0,100))+
   coord_sf(xlim = c(bb[1], bb[3]), ylim = c(bb[2], bb[4]), expand = FALSE) +
   theme_bw()+
   theme(legend.position = "top", axis.title.x=element_blank(),axis.title.y=element_blank())+
   guides(fill = guide_colorbar(order = 1),col = guide_legend(order = 2))# ,legend.box="vertical"
-  gg_title
-write_rds(gg_title, file.path(out,"ggplots","gg_title.rds"))
-ggsave (file.path(out, "map_title.png"))
+  gg_soyfarms
+write_rds(gg_soyfarms, file.path(out,"ggplots","gg_soyfarms.rds"))
+ggsave (file.path(out, "map_soyfarms.png"))
   
