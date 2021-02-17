@@ -28,7 +28,7 @@ gg10 <- gg9+theme(plot.margin = unit(c(0,0,0,0), "lines"))
 #           heights = c(1,0.5,0.5))
 # ggsave  (file.path  (plot.dir, "combined_test.png"), width = 10.8*5, height = 11.5*6, scale = 0.25)
 
-ggarrange(gg1, ggarrange (gg10, nrow=2),
+ggarrange(gg1, ggarrange (gg10, nrow=3),
           ncol=2,
           widths =c(1,0.3),
           labels=c("a","b"))

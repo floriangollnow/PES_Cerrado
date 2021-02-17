@@ -1,6 +1,7 @@
 #ZDC market share
 library(tidyverse)
 library(sf)
+library(rmapshaper)
 out <- "/Users/floriangollnow/Dropbox/ZDC_project/Data/TraseData2015/bulk_download2/Brazil_Soy_2.5.0_pc/Brazil_Soy_25_cnpj"
 
 trase<- read_rds(file.path (out, "trase_25_cnpj.rds"))
@@ -27,8 +28,8 @@ bb <- st_bbox(munis_zdc_p)
 
 gg_zdc<- ggplot ()+
   geom_sf(data=munis_zdc_p, aes(fill=ZDC_perc),color=NA)+
-  geom_sf(data=states, color = "grey60", fill = NA, size=0.5)+
-  geom_sf(data=matop, aes(color=Matopiba), fill = NA, size=0.7, show.legend = 'line')+
+  geom_sf(data=states, color = "grey60", fill = NA, size=0.5)+ 
+  geom_sf(data=matop, aes(color=Matopiba), fill = NA, size=0.7, show.legend = 'line')+ 
   scale_fill_viridis_c( name="ZDC market\nshare in %")+
   coord_sf(xlim = c(bb[1], bb[3]), ylim = c(bb[2], bb[4]), expand = FALSE) +
   theme_bw()+
