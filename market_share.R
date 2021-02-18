@@ -6,11 +6,12 @@ out <- "/Users/floriangollnow/Dropbox/ZDC_project/Data/TraseData2015/bulk_downlo
 
 trase<- read_rds(file.path (out, "trase_25_cnpj.rds"))
 trase_2018 <- trase %>% filter(YEAR==2018)
-trase_2018_t <- trase_2018 %>% group_by(GEOCODE) %>% summarise(SoyT = sum(SOY_EQUIVALENT_TONNES, na.rm = TRUE))
-trase_2018_zdc <-  trase_2018 %>% filter(G_ZDC==TRUE)%>% group_by(GEOCODE) %>% summarise(SoyT_ZDC = sum(SOY_EQUIVALENT_TONNES, na.rm = TRUE))
+trase_2018_t <- trase_2018  %>% group_by(GEOCODE) %>% summarise(SoyT = sum(SOY_EQUIVALENT_TONNES, na.rm = TRUE))## all
+trase_2018_te <- trase_2018 %>%filter (EXPORTER!="DOMESTIC CONSUMPTION") %>% group_by(GEOCODE) %>% summarise(SoyTe = sum(SOY_EQUIVALENT_TONNES, na.rm = TRUE))## only export
+trase_2018_zdc <-  trase_2018 %>% filter(G_ZDC==TRUE)%>% group_by(GEOCODE) %>% summarise(SoyT_ZDC = sum(SOY_EQUIVALENT_TONNES, na.rm = TRUE)) ## only ZDC
 
-trase_2018_zdc <- trase_2018_zdc %>% full_join(trase_2018_t) %>% replace_na(list(SoyT_ZDC=0)) 
-trase_2018_zdc <- trase_2018_zdc %>% mutate(ZDC_perc = (SoyT_ZDC/SoyT)*100)
+trase_2018_zdc <- trase_2018_t %>% left_join(trase_2018_te)%>% left_join(trase_2018_zdc)  %>% replace_na(list(SoyT_ZDC=0, SoyTe=0)) ## set those to zero that are present in all (have soybean prodcution), but dont export
+trase_2018_zdc <- trase_2018_zdc %>% mutate(ZDC_perc = if_else(SoyTe==0, 0,(SoyT_ZDC/SoyTe)*100))
 
 #mapping
 out <- '/Users/floriangollnow/Dropbox/PaperRachael/Data/'
@@ -27,7 +28,7 @@ munis_zdc_p <- munis %>% left_join(trase_2018_zdc, by = c("cd_geocmu"="GEOCODE")
 bb <- st_bbox(munis_zdc_p)
 
 gg_zdc<- ggplot ()+
-  geom_sf(data=munis_zdc_p, aes(fill=ZDC_perc),color=NA)+
+  geom_sf(data=munis_zdc_p, aes(fill=ZDC_perc),color=NA)+#ZDC_perc
   geom_sf(data=states, color = "grey60", fill = NA, size=0.5)+ 
   geom_sf(data=matop, aes(color=Matopiba), fill = NA, size=0.7, show.legend = 'line')+ 
   scale_fill_viridis_c( name="ZDC market\nshare in %")+

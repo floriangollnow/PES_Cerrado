@@ -38,6 +38,7 @@ ggarrange(gg3,gg8,gg7,gg6,gg4,gg5,
           ncol=3, 
           nrow=2,
           labels=c("a","b","c","d","e","f"))
+ggsave  (file.path  ("ggplots", "panel_2_small_maps.png"), width = 10.8*5, height = 10.8*5, scale = 0.25)
 ggsave  (file.path  (plot.dir, "panel_2_small_maps.png"), width = 10.8*5, height = 10.8*5, scale = 0.25)
 
 
