@@ -4,5 +4,5 @@ Quick descriptions: I basically loaded all data from sidra ('Sidra_data.R'), mad
 data folder: https://www.dropbox.com/sh/2aoimaz15chrc8s/AADlTUyq-UhOwId-w8FnJSBka?dl=0
 
 
-![LULC](/ggplots/panel_1_large_LULC.png)
-![Indicators](/ggplots/panel_2_small_maps.png)
+![LULC](ggplots/panel_1_large_LULC.png)
+![Indicators](ggplots/panel_2_small_maps.png)
