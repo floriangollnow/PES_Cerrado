@@ -20,7 +20,7 @@ yield_kg_ha<-yield_kg_ha %>%  as_tibble ()%>%  select (`Município (Código)`, `
 
 write_rds (yield_kg_ha, file.path(out, "yield_kg_ha_2014_2019.rds"))
 
-# soy production (tons)
+# soy production (tons) ----
 info_sidra(1612, wb=FALSE)
 prod_tons <- get_sidra(1612,variable = 214, period = c("2014-2019"), geo="City", classific =c("c81"), category = list(2713))
 names(prod_tons)
@@ -30,7 +30,7 @@ prod_tons<-prod_tons %>%  as_tibble ()%>%  select (`Município (Código)`, `Muni
 write_rds (prod_tons, file.path(out, "prod_tons_soy_2014_2019.rds"))
 
 
-# family farms
+# family farms -----
 info_sidra(6778, wb=FALSE)
 family_farms <- get_sidra(6778,variable = 183, period = c("2017"), geo="City", 
                           classific= c("c829", "c220"), 
@@ -41,20 +41,37 @@ family_farms<-family_farms %>%  as_tibble ()%>%  select (`Município (Código)`,
 write_rds (family_farms, file.path(out, "family_farms_2017.rds"))
 
 
-# land tenure 
+# land tenure -----
 land_tenure <- get_sidra(6778,variable = 183, period = c("2017"), geo="City", 
                           classific= "c218", 
                           category = "all")
 unique( land_tenure$`Condição do produtor em relação às terras`)
 land_tenure<-land_tenure%>%  as_tibble ()%>%  select (`Município (Código)`, `Município`, Ano,`Condição do produtor em relação às terras` ,`Unidade de Medida`, Valor)
 write_rds (land_tenure, file.path(out, "land_tenure_2017.rds"))
+## update to farms with definite land title!
 
-# soy farms 
+# soy farms ------
 info_sidra(6957, wb=FALSE) # produces error - downloaded from webside!
 soy_f <- read_csv(file.path(out, "sidra_download/tabela6957_tot_soja.csv"),skip = 5,n_max = I(5561-6), col_types = "cccccdcdc")
+
+# soy colhida area ---- 
+#https://apisidra.ibge.gov.br/values/t/6957/n6/all/v/10089/p/all/c829/46302/c226/4896,111689,113869/c218/46502/c12517/113601/d/v10089%200
+soy_a <- get_sidra(api = "/t/6957/n6/all/v/10089/p/all/c829/46302/c226/4896,111689,113869/c218/46502/c12517/113601/d/v10089%200")
+soy_a_tb <- as_tibble(soy_a) %>% select (`Município (Código)`, `Município`, `Ano`, `Produtos da lavoura temporária (Código)`, 
+                                      `Produtos da lavoura temporária`,`Unidade de Medida`, Valor) 
+write_rds (soy_a_tb, file.path(out, "soy_area_colhida_2017.rds"))
+# soy area and number of farms ====
+# https://apisidra.ibge.gov.br/values/t/6957/n6/all/v/10084,10089/p/all/c829/46302/c226/4896,111689,113869/c218/46502/c12517/113601/d/v10089%200
+soy_a_f <- get_sidra(api = "/t/6957/n6/all/v/10084,10089/p/all/c829/46302/c226/4896,111689,113869/c218/46502/c12517/113601/d/v10089%200")
+soy_a_f_tb <- as_tibble(soy_a_f) %>% select (`Município (Código)`, `Município`, `Variável (Código)`, `Variável` , `Ano`, `Produtos da lavoura temporária (Código)`, 
+                                         `Produtos da lavoura temporária`,`Unidade de Medida`, Valor) 
+
+write_rds (soy_a_f_tb, file.path(out, "soy_area_colhida_nfarms_2017.rds"))
+
+
 #soy_f <- soy_f %>% replace_na(list(`Soja em grão`=0))
 write_rds (soy_f, file.path(out, "soy_farms_2017.rds"))
-
+## update to soy area as percentage of agicultural areas (excl. pasture?)
 
 # gini coefficient
 # Tabela 1722 - Índice de Gini da distribuição do rendimento nominal mensal das pessoas de 10 anos ou mais de idade, com rendimento, por situação do domicílio e sexo (Vide Notas)

@@ -1,4 +1,5 @@
 #average income
+# change to binned
 library(tidyverse)
 library(sf)
 library (ggplot2)

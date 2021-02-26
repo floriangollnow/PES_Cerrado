@@ -15,12 +15,33 @@ out <- '/Users/floriangollnow/Dropbox/PaperRachael/Data'
 # leesee
 # partner
 #?
+# PORT
+# Proprietário(a)
+# Concessionário(a) ou assentado(a) aguardando titulação definitiva
+# Arrendatário(a)
+# Parceiro(a)
+# Comodatário(a)
+# Ocupante
+# Produtor sem área
+##ENGL.
+# Owner
+# Concessionaire or settler awaiting final title
+# Lessee
+# Partner
+# Commodator
+# Occupant
+# Producer without area 
 
-soy_f <- read_rds ( file.path(out, "sidra/soy_farms.rds"))
-unique(soy_f$`Soja em grão`)
+
+## tbd. update to definite land title instead of owners only!
+land <- read_rds ( file.path(out, "sidra/land_tenure_2017.rds"))
 
 land_t <- land %>% filter(`Condição do produtor em relação às terras`=="Total") %>% rename(Valor_total = Valor) %>% select (`Município (Código)`,Valor_total )
-land_p <- land %>% filter (`Condição do produtor em relação às terras`=="Proprietário(a)") %>% rename(Valor_p = Valor)%>% select (`Município (Código)`,Valor_p )
+#land_p <- land %>% filter (`Condição do produtor em relação às terras`=="Proprietário(a)" |`Condição do produtor em relação às terras`=="Concessionário(a) ou assentado(a) aguardando titulação definitiva")
+land_p <- land %>% filter (`Condição do produtor em relação às terras`=="Ocupante" |`Condição do produtor em relação às terras`=="Produtor sem área")#|`Condição do produtor em relação às terras`=="Concessionário(a) ou assentado(a) aguardando titulação definitiva")
+
+land_p <- land_p %>%  group_by(`Município (Código)`) %>% summarise(Valor_p=sum(Valor, na.rm=TRUE))
+
 land_p <- land_p %>% left_join(land_t)
 land_p <- land_p %>% mutate (land_p_perc = (Valor_p/Valor_total)*100)
 
@@ -33,12 +54,16 @@ matop <- read_rds ( file.path(out, "Matopiba","Matopiba_WGS84.rds"))
 matop <- matop %>% mutate(Matopiba="")
 munis_land_p <- munis %>% left_join(land_p, by = c("cd_geocmu"="Município (Código)") )
 
+munis_land_p <- munis_land_p %>% mutate(land_p_perc10 =if_else(land_p_perc >= 20,20, land_p_perc))
 bb <- st_bbox(munis_land_p)
+
 gg_title<- ggplot ()+
-  geom_sf(data=munis_land_p, aes(fill=land_p_perc), color=NA)+
+  geom_sf(data=munis_land_p, aes(fill=land_p_perc10), color=NA)+
   geom_sf(data=states, color = "grey60", fill = NA, size=0.5)+
   geom_sf(data=matop, aes(color=Matopiba), fill = NA, size=0.7, show.legend = 'line')+
-  scale_fill_viridis_c( name="Farms owned\nin %")+
+  scale_fill_viridis_c(name="Farms ocupied or\nproducers without land in %", limits=c(0,20),
+                       breaks= c(0,5,10,15,20),labels=c("0","5","10","15", ">=20"))+
+  #scale_fill_binned(breaks=c(0,1,5,10,20,40,100),type="viridis",  name="Farms ocupied or\nproducers without land in %")+
   coord_sf(xlim = c(bb[1], bb[3]), ylim = c(bb[2], bb[4]), expand = FALSE) +
   theme_bw()+
   theme(legend.position = "top", axis.title.x=element_blank(),axis.title.y=element_blank())+

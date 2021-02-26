@@ -1,5 +1,5 @@
 #mapbiomas soy area and deforestation plus protected areas and indiginous lands
-
+## change to binned 
 library(raster)
 library(rasterVis)
 library(sf)
