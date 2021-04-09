@@ -41,7 +41,7 @@ gg_soy_area<- ggplot ()+
   theme(legend.position = "top", axis.title.x=element_blank(),axis.title.y=element_blank())+
   guides(fill = guide_colorbar(order = 1),col = guide_legend(order = 2))# ,legend.box="vertical"
   gg_soy_area
-write_rds(gg_soyfarms, file.path(out,"ggplots","gg_soyarea.rds"))
+write_rds(gg_soy_area, file.path(out,"ggplots","gg_soyarea.rds"))
 ggsave (file.path(out, "map_soyarea.png"))
 
 

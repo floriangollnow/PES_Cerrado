@@ -5,7 +5,7 @@ library(tidyverse)
 out <- '/Users/floriangollnow/Dropbox/PaperRachael/Data/sidra'
 
 
-#income
+#income ----
 info_sidra(4009, wb=FALSE)
 income_mean <- get_sidra(4009,variable = 878, period = c("2010"), geo="City", classific =c("c1", "c11339"), category = list(6795, 31635))
 income_mean <-income_mean %>%  as_tibble ()%>%  select (`Município (Código)`, `Município`, Ano,  `Unidade de Medida`, Valor)

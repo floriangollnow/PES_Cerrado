@@ -23,7 +23,8 @@ gg_gini<- ggplot ()+
   geom_sf(data=states_cerr_gini, aes(fill=Valor),color=NA)+
   geom_sf(data=states, color = "grey60", fill = NA, size=0.5)+
   geom_sf(data=matop, aes(color=Matopiba), fill = NA, size=0.7, show.legend = 'line')+
-  scale_fill_viridis_c( name="Gini\nindex")+
+  scale_fill_viridis_c( name="Gini index", limits=c(0.45,0.6),
+                        breaks= c(0.45,0.5,0.55,0.6),labels=c(".45",".50",".55",".60"))+
   coord_sf(xlim = c(bb[1], bb[3]), ylim = c(bb[2], bb[4]), expand = FALSE)+
   theme_bw()+
   theme(legend.position = "top", axis.title.x=element_blank(),axis.title.y=element_blank())+

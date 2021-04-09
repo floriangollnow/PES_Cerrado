@@ -17,19 +17,19 @@ out <- '/Users/floriangollnow/Dropbox/PaperRachael/Data'
 #?
 # PORT
 # Proprietário(a)
-# Concessionário(a) ou assentado(a) aguardando titulação definitiva
-# Arrendatário(a)
+# S # Concessionário(a) ou assentado(a) aguardando titulação definitiva
+# S # Arrendatário(a)
 # Parceiro(a)
 # Comodatário(a)
-# Ocupante
+# S # Ocupante
 # Produtor sem área
 ##ENGL.
 # Owner
-# Concessionaire or settler awaiting final title
-# Lessee
+# S # Concessionaire or settler awaiting final title 
+# S # Lessee 
 # Partner
 # Commodator
-# Occupant
+# S # Occupant 
 # Producer without area 
 
 
@@ -38,8 +38,10 @@ land <- read_rds ( file.path(out, "sidra/land_tenure_2017.rds"))
 
 land_t <- land %>% filter(`Condição do produtor em relação às terras`=="Total") %>% rename(Valor_total = Valor) %>% select (`Município (Código)`,Valor_total )
 #land_p <- land %>% filter (`Condição do produtor em relação às terras`=="Proprietário(a)" |`Condição do produtor em relação às terras`=="Concessionário(a) ou assentado(a) aguardando titulação definitiva")
-land_p <- land %>% filter (`Condição do produtor em relação às terras`=="Ocupante" |`Condição do produtor em relação às terras`=="Produtor sem área")#|`Condição do produtor em relação às terras`=="Concessionário(a) ou assentado(a) aguardando titulação definitiva")
-
+#land_p <- land %>% filter (`Condição do produtor em relação às terras`=="Ocupante" |`Condição do produtor em relação às terras`=="Produtor sem área")#|`Condição do produtor em relação às terras`=="Concessionário(a) ou assentado(a) aguardando titulação definitiva")
+land_p <- land %>% filter (`Condição do produtor em relação às terras`=="Ocupante" |
+                             `Condição do produtor em relação às terras`=="Arrendatário(a)"|
+                             `Condição do produtor em relação às terras`=="Concessionário(a) ou assentado(a) aguardando titulação definitiva")
 land_p <- land_p %>%  group_by(`Município (Código)`) %>% summarise(Valor_p=sum(Valor, na.rm=TRUE))
 
 land_p <- land_p %>% left_join(land_t)
@@ -61,7 +63,7 @@ gg_title<- ggplot ()+
   geom_sf(data=munis_land_p, aes(fill=land_p_perc10), color=NA)+
   geom_sf(data=states, color = "grey60", fill = NA, size=0.5)+
   geom_sf(data=matop, aes(color=Matopiba), fill = NA, size=0.7, show.legend = 'line')+
-  scale_fill_viridis_c(name="Farms ocupied or\nproducers without land in %", limits=c(0,20),
+  scale_fill_viridis_c(name="Properties without formal \nland title or rented %", limits=c(0,20),
                        breaks= c(0,5,10,15,20),labels=c("0","5","10","15", ">=20"))+
   #scale_fill_binned(breaks=c(0,1,5,10,20,40,100),type="viridis",  name="Farms ocupied or\nproducers without land in %")+
   coord_sf(xlim = c(bb[1], bb[3]), ylim = c(bb[2], bb[4]), expand = FALSE) +

@@ -5,6 +5,7 @@ library(rasterVis)
 library(sf)
 library(tidyverse)
 library(rmapshaper)
+library (terra)
 
 raster_dir <- "/Users/floriangollnow/Dropbox/PaperRachael/Data/Port Cost Assesment/"
 out <- '/Users/floriangollnow/Dropbox/PaperRachael/Data'
@@ -26,6 +27,7 @@ matop <- matop %>% mutate(Matopiba="")
 
 #main_lu
 rents <- raster(file.path(raster_dir,"rent.tif"))
+rents_terr <- rast (file.path(raster_dir,"rent.tif"))
 
 boundary_trans <- boundary %>% st_transform  (crs=st_crs(rents))
 mask_file_trans <- mask_file %>% st_transform ( crs=st_crs(rents))
