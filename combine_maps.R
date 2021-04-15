@@ -8,6 +8,7 @@ plot.dir  <- "/Users/floriangollnow/Dropbox/PaperRachael/Data/ggplots"
 dir(plot.dir)
 
 gg1<-read_rds(file.path(plot.dir, "gg_lu.rds"))#""#"gg_income.rds"
+gg2 <- read_rds( file.path(plot.dir,"gg_soydef.rds"))
 #gg2<-read_rds(file.path(plot.dir, "gg_soy.rds"))#"gg_soy.rds"
 #gg1<-read_rds(file.path(plot.dir, "gg_zdc.rds"))
 gg3<-read_rds(file.path(plot.dir, "gg_zdc.rds"))
@@ -33,11 +34,11 @@ gg10 <- gg9+theme(plot.margin = unit(c(0,0,0,0), "lines"))
 #           heights = c(1,0.5,0.5))
 # ggsave  (file.path  (plot.dir, "combined_test.png"), width = 10.8*5, height = 11.5*6, scale = 0.25)
 
-ggarrange(gg1, ggarrange (gg10, nrow=3),
-          ncol=2,
-          widths =c(1,0.3),
-          labels=c("a","b"))
-ggsave  (file.path  (plot.dir, "panel_1_large_LULC.png"), width = 10.8*3, height = 9*3, scale = 0.25)
+ggarrange(gg1,gg2, ggarrange (gg10, nrow=3),
+          ncol=3,
+          widths =c(1,1,0.2),
+          labels=c("a","b","c"))
+ggsave  (file.path  (plot.dir, "panel_1_large_LULC.png"), width = 10.8*5, height = 9*3, scale = 0.25)
 
 #
 #a ZDC
