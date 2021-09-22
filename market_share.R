@@ -30,9 +30,8 @@ bb <- st_bbox(munis_zdc_p)
 gg_zdc<- ggplot ()+
   geom_sf(data=munis_zdc_p, aes(fill=ZDC_perc),color=NA)+#ZDC_perc
   geom_sf(data=states, color = "black", fill = NA, size=0.5, lty="longdash")+#color = "grey60", fill = NA, size=0.5)+
-  geom_sf(data=matop, color="white", fill = NA, size=1.6)
-  geom_sf(data=matop, color="white", fill = NA, size=1.2)+
-  geom_sf(data=matop, aes(color=Matopiba), fill = NA, size=2, show.legend = 'line')+
+  geom_sf(data=matop, color="white", fill = NA, size=1.6)+
+  geom_sf(data=matop, aes(color=Matopiba), fill = NA, size=1.2, show.legend = 'line')+
   scale_color_manual (values="#a65628")+
   #scale_fill_viridis_c( name="ZDC market\nshare in %")+
   scale_fill_stepsn(name="ZDC market\nshare in %", colors= c("#edf8fb", "#9ebcda", "#8c6bb1", "#6e016b"), breaks=seq(0,100, by=25), limit=c(0,100))+
