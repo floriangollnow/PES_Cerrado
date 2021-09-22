@@ -55,7 +55,7 @@ gg_lu <- ggplot() +
   geom_sf (data=cerrado, fill="grey90", color=NA)+
   geom_tile(data=main_lu.df1,  aes(x,y, fill = value)) +
   scale_fill_manual(values = c("1"="#c59ff4", "2"="#ca0020"), na.value=NA,# c("1"="#c59ff4", "2"="#e66101")
-                    name = "LULCC", labels = c("Soy", "Soy-\nDeforestation"), na.translate=FALSE)+
+                    name = "LUCC", labels = c("Soy", "Soy-\nDeforestation"), na.translate=FALSE)+
   geom_sf(data=states,color = "black", fill = NA, size=0.5, lty="longdash")+
   #geom_sf(data=pa_ind, aes (color=Designation ),alpha=0.5) +
   #scale_color_manual  (values=c("Indigenous"="#fdb863" , "PA"="#e66101"))+#"#fc8d62", "#e78ac3"

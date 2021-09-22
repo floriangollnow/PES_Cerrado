@@ -53,7 +53,9 @@ ggsave  (file.path  ("ggplots", "panel_1_large_maps.png"), width = 10.8*5, heigh
 #d title
 #e soy farm size #gg8
 #f income
-g <- ggarrange(gg3,gg8,gg7a,gg6,gg7b, gg4,
+g <- ggarrange(gg3,gg8,gg7a,gg6,gg7b, 
+               gg4+guides(
+  fill = guide_colorsteps(order = 1)),
           ncol=3, 
           nrow=2,
           labels=c("a","b","c","d","e","f"))
