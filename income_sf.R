@@ -7,23 +7,31 @@ library (ggpubr)
 library(wesanderson)
 library(rmapshaper)
 
-out <- '/Users/floriangollnow/Dropbox/PaperRachael/Data/'
+out <- '/Users/floriangollnow/Dropbox/ZDC_project/PaperRachael/Data/'
 
 income <- read_rds ( file.path(out, "sidra/mean_income_2010.rds"))
-munis <- read_sf (file.path(out, "municipalities_cerrado_biome","municipalities_cerrado_biome_wgs84.shp"))
-states <- read_rds (file.path(out, "ibge","StatesBR_WGS84.rds"))
+munis <- read_sf (file.path(out, "municipalities_cerrado_biome","municipalities_cerrado_biome_wgs84.shp"))%>% st_transform(munis, crs = 4326)
+states <- read_rds (file.path(out, "ibge","StatesBR_WGS84.rds"))%>% st_transform(munis, crs = 4326)
 munis <- munis %>% ms_simplify()
 states <- states %>% ms_simplify()
 
 munis_income <- munis %>% left_join(income, by = c("cd_geocmu"="Município (Código)") )
 bb <- st_bbox(munis_income)
-matop <- read_rds ( file.path(out, "Matopiba","Matopiba_WGS84.rds"))
+matop <- read_rds ( file.path(out, "Matopiba","Matopiba_WGS84.rds"))%>% st_transform(munis, crs = 4326) %>% ms_simplify()
 matop <- matop %>% mutate(Matopiba="")
 gg_income<- ggplot ()+
   geom_sf(data=munis_income, aes(fill=Valor/1000),color=NA)+
-  geom_sf(data=states, color = "grey60", fill = NA, size=0.5)+
-  geom_sf(data=matop, aes(color=Matopiba), fill = NA, size=0.7, show.legend = 'line')+
-  scale_fill_viridis_c( name="Mean monthly income\nin 1000 BRL")+
+  geom_sf(data=states, color = "black", fill = NA, size=0.5, lty="longdash")+#color = "grey60", fill = NA, size=0.5)+
+  geom_sf(data=matop, color="white", fill = NA, size=1.6)+
+  geom_sf(data=matop, aes(color=Matopiba), fill = NA, size=1.2, show.legend = 'line')+
+  scale_color_manual (values="#a65628")+
+  scale_fill_stepsn(name="Mean monthly income\nin 1000 BRL", colors= c("#edf8fb", "#bfd3e6", "#9ebcda", "#8c96c6","#8856a7","#810f7c"),
+                    breaks=seq(0,6, by=1), limit=c(0,6))+
+  
+
+  # geom_sf(data=states, color = "grey60", fill = NA, size=0.5)+
+  # geom_sf(data=matop, aes(color=Matopiba), fill = NA, size=0.7, show.legend = 'line')+
+  # scale_fill_viridis_c( name="Mean monthly income\nin 1000 BRL")+
   coord_sf(xlim = c(bb[1], bb[3]), ylim = c(bb[2], bb[4]), expand = FALSE)+
   theme_bw()+
   theme(legend.position = "top", axis.title.x=element_blank(),axis.title.y=element_blank())# ,legend.box="vertical"

@@ -9,7 +9,7 @@ library(wesanderson)
 library(rmapshaper)
 library(viridis)
 
-out <- '/Users/floriangollnow/Dropbox/PaperRachael/Data'
+out <- '/Users/floriangollnow/Dropbox/ZDC_project/PaperRachael/Data'
 # Proprietário(a) Owner
 # Concessionaire or settler awaiting final title
 # leesee
@@ -21,21 +21,25 @@ soy_a_w <- soy_a %>% pivot_wider(id_cols=c(`Município (Código)`:Ano, `Unidade 
 soy_a_w <- soy_a_w %>% replace_na(list ("Soja em grão"=0, "Sementes de soja (produzidas para plantio)"=0))
 soy_a_w <- soy_a_w %>%  mutate (soy_perc = ((`Soja em grão`+`Sementes de soja (produzidas para plantio)`)/Total)*100)
 
-munis <- read_sf (file.path(out, "municipalities_cerrado_biome","municipalities_cerrado_biome_wgs84.shp"))
-states <- read_rds (file.path(out, "ibge","StatesBR_WGS84.rds"))
+munis <- read_sf (file.path(out, "municipalities_cerrado_biome","municipalities_cerrado_biome_wgs84.shp")) %>% st_transform(crs= 4326)
+states <- read_rds (file.path(out, "ibge","StatesBR_WGS84.rds"))%>% st_transform(crs= 4326)
 
 munis <- munis %>% ms_simplify()
 states <- states %>% ms_simplify()
-matop <- read_rds ( file.path(out, "Matopiba","Matopiba_WGS84.rds"))
+matop <- read_rds ( file.path(out, "Matopiba","Matopiba_WGS84.rds"))%>% st_transform(crs= 4326)
 matop <- matop %>% mutate(Matopiba="")
 munis_soy_p <- munis %>% left_join(soy_a_w, by = c("cd_geocmu"="Município (Código)") )
 
 bb <- st_bbox(munis_soy_p)
 gg_soy_area<- ggplot ()+
   geom_sf(data=munis_soy_p, aes(fill=soy_perc), color=NA)+
-  geom_sf(data=states, color = "grey60", fill = NA, size=0.5)+
-  geom_sf(data=matop, aes(color=Matopiba), fill = NA, size=0.7, show.legend = 'line')+
-  scale_fill_viridis_c( name="Soy area\nin %", limits=c(0,100))+
+  geom_sf(data=states, color = "black", fill = NA, size=0.5, lty="longdash")+#color = "grey60", fill = NA, size=0.5)+
+  geom_sf(data=matop, color="white", fill = NA, size=1.6)+
+  geom_sf(data=matop, aes(color=Matopiba), fill = NA, size=1.2, show.legend = 'line')+
+  scale_color_manual (values="#a65628")+
+  #scale_fill_viridis_c( name="Soy area\nin %", limits=c(0,100))+
+  #scale_fill_viridis_b( name="Soy area\nin %", limits=c(0,100), option = "D")+
+  scale_fill_stepsn(name="Soy area\nin %", colors= c("#edf8fb", "#9ebcda", "#8c6bb1", "#6e016b"), breaks=seq(0,100, by=25), limit=c(0,100))+
   coord_sf(xlim = c(bb[1], bb[3]), ylim = c(bb[2], bb[4]), expand = FALSE) +
   theme_bw()+
   theme(legend.position = "top", axis.title.x=element_blank(),axis.title.y=element_blank())+
@@ -65,22 +69,26 @@ soy_farm_size <- soy_a_1_w_s %>% full_join(soy_f_1_w_s)
 soy_farm_size <- soy_farm_size %>% mutate(meansize = soy_area/soy_farms)
 View(soy_farm_size)
 
-munis <- read_sf (file.path(out, "municipalities_cerrado_biome","municipalities_cerrado_biome_wgs84.shp"))
-states <- read_rds (file.path(out, "ibge","StatesBR_WGS84.rds"))
+munis <- read_sf (file.path(out, "municipalities_cerrado_biome","municipalities_cerrado_biome_wgs84.shp"))%>% st_transform(crs= 4326)
+states <- read_rds (file.path(out, "ibge","StatesBR_WGS84.rds"))%>% st_transform(crs= 4326)
 
 munis <- munis %>% ms_simplify()
 states <- states %>% ms_simplify()
-matop <- read_rds ( file.path(out, "Matopiba","Matopiba_WGS84.rds"))
+matop <- read_rds ( file.path(out, "Matopiba","Matopiba_WGS84.rds"))%>% st_transform(crs= 4326) %>% ms_simplify()
 matop <- matop %>% mutate(Matopiba="")
 munis_soy_farm_size <- munis %>% left_join(soy_farm_size, by = c("cd_geocmu"="Município (Código)") )
 
 bb <- st_bbox(munis_soy_p)
 gg_soy_farm_size<- ggplot ()+
   geom_sf(data=munis_soy_farm_size, aes(fill=meansize/1000), color=NA)+
-  geom_sf(data=states, color = "grey60", fill = NA, size=0.5)+
-  geom_sf(data=matop, aes(color=Matopiba), fill = NA, size=0.7, show.legend = 'line')+
-  #scale_fill_binned(breaks=c(0,1,2,3,4,5,6,7), type="viridis", name="Mean soy area by farm\nin kha")+
-  scale_fill_viridis_c( name="Soy area by farm\nin kha")+ #, trans = "log10"
+  geom_sf(data=states, color = "black", fill = NA, size=0.5, lty="longdash")+#color = "grey60", fill = NA, size=0.5)+
+  geom_sf(data=matop, color="white", fill = NA, size=1.6)+
+  geom_sf(data=matop, aes(color=Matopiba), fill = NA, size=1.2, show.legend = 'line')+
+  scale_color_manual (values="#a65628")+
+  scale_fill_stepsn(name="Soy area by farm\nin kha", colors= c("#edf8fb", "#bfd3e6", "#9ebcda", "#8c96c6","#8c6bb1","#88419d","#6e016b"),
+                    breaks=seq(0,7, by=1), limit=c(0,7))+
+  
+  #scale_fill_viridis_c( name="Soy area by farm\nin kha")+ #, trans = "log10"
   coord_sf(xlim = c(bb[1], bb[3]), ylim = c(bb[2], bb[4]), expand = FALSE) +
   theme_bw()+
   theme(legend.position = "top", axis.title.x=element_blank(),axis.title.y=element_blank())+

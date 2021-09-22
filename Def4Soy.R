@@ -8,18 +8,21 @@ library(rmapshaper)
 #install.packages("remotes")
 #remotes::install_github("coolbutuseless/ggpattern")
 library(ggpattern)
-raster_dir <- "/Users/floriangollnow/Dropbox/PaperRachael/Data/Mapbiomas"
-out <- '/Users/floriangollnow/Dropbox/PaperRachael/Data'
+raster_dir <- "/Users/floriangollnow/Dropbox/ZDC_project/PaperRachael/Data/Mapbiomas"
+out <- '/Users/floriangollnow/Dropbox/ZDC_project/PaperRachael/Data'
 #spatial
-boundary <- as_Spatial(read_sf (file.path(out, "cerrado_border","limite_cerrado_wgs84.shp")))
+cerrado <- read_sf (file.path(out, "cerrado_border","limite_cerrado_wgs84.shp"))
+cerrado <- cerrado %>% st_transform(crs = 4326)
+boundary <- as_Spatial(cerrado)
 munis <- read_sf (file.path(out, "municipalities_cerrado_biome","municipalities_cerrado_biome_wgs84.shp"))
+munis <- munis %>% st_transform(crs = 4326)
 states <- read_rds (file.path(out, "ibge","StatesBR_WGS84.rds"))
-pa <- read_sf (file.path(out, "conservation_units_cerrado_biome","conservation_units_cerrado_biome_wgs84.shp")) %>% mutate(Designation="PA") %>% dplyr::select (Designation)
-ind <- read_sf (file.path(out, "indigeneous_area_cerrado_biome","indigeneous_area_cerrado_biome_wgs84.shp"))%>% mutate(Designation="Indigenous") %>% dplyr::select(Designation)
-pa_ind <- rbind (pa , ind)
+# pa <- read_sf (file.path(out, "conservation_units_cerrado_biome","conservation_units_cerrado_biome_wgs84.shp")) %>% mutate(Designation="PA") %>% dplyr::select (Designation)
+# ind <- read_sf (file.path(out, "indigeneous_area_cerrado_biome","indigeneous_area_cerrado_biome_wgs84.shp"))%>% mutate(Designation="Indigenous") %>% dplyr::select(Designation)
+# pa_ind <- rbind (pa , ind) 
 munis <- munis %>% ms_simplify()
 states <- states %>% ms_simplify()
-pa_ind <- pa_ind %>% ms_simplify()
+# pa_ind <- pa_ind %>% ms_simplify()
 bb <- st_bbox(munis)
 
 
@@ -49,19 +52,21 @@ states_cropped <- st_crop(states, bb)
 states_cropped <- states_cropped %>% filter (State_abb!="ES", State_abb!="RO")
 
 gg_lu <- ggplot() +
+  geom_sf (data=cerrado, fill="grey90", color=NA)+
   geom_tile(data=main_lu.df1,  aes(x,y, fill = value)) +
-  scale_fill_manual(values = c("1"="#bababa", "2"="#ca0020"), na.value=NA,# c("1"="#c59ff4", "2"="#e66101")
+  scale_fill_manual(values = c("1"="#c59ff4", "2"="#ca0020"), na.value=NA,# c("1"="#c59ff4", "2"="#e66101")
                     name = "LULCC", labels = c("Soy", "Soy-\nDeforestation"), na.translate=FALSE)+
   geom_sf(data=states,color = "black", fill = NA, size=0.5, lty="longdash")+
   #geom_sf(data=pa_ind, aes (color=Designation ),alpha=0.5) +
   #scale_color_manual  (values=c("Indigenous"="#fdb863" , "PA"="#e66101"))+#"#fc8d62", "#e78ac3"
-  geom_sf(data=matop, aes(lty=Matopiba), color="#5e3c99",fill = NA, size=1)+#"#7570b3"
-  geom_sf(data=sf::st_point_on_surface(states_cropped),colour = "white",alpha=0.5, size = 10)+
+  geom_sf(data=matop, color="white", fill = NA, size=1.6)+
+  geom_sf(data=matop, aes(lty=Matopiba), color="#a65628",fill = NA, size=1.2)+#"#7570b3"#5e3c99
+  geom_sf(data=sf::st_point_on_surface(states_cropped),colour = "white",alpha=0.7, size = 10)+
   geom_sf_text(data=states_cropped, aes(label = State_abb),fun.geometry = st_point_on_surface)+
   coord_sf(xlim = c(bb[1], bb[3]), ylim = c(bb[2], bb[4]), expand = FALSE)+
   theme_bw()+
   theme(legend.position = "right", axis.title.x=element_blank(),axis.title.y=element_blank())# ,legend.box="vertical", legend.box="vertical",
-
+#gg_lu
 
 write_rds(gg_lu, file.path(out,"ggplots","gg_soydef.rds"))
 ggsave(file.path(out,"gg_soydef_test.png"))

@@ -9,7 +9,7 @@ library(wesanderson)
 library(rmapshaper)
 library(viridis)
 
-out <- '/Users/floriangollnow/Dropbox/PaperRachael/Data'
+out <- '/Users/floriangollnow/Dropbox/ZDC_project/PaperRachael/Data'
 # Proprietário(a) Owner
 # Concessionaire or settler awaiting final title
 # leesee
@@ -47,24 +47,29 @@ land_p <- land_p %>%  group_by(`Município (Código)`) %>% summarise(Valor_p=sum
 land_p <- land_p %>% left_join(land_t)
 land_p <- land_p %>% mutate (land_p_perc = (Valor_p/Valor_total)*100)
 
-munis <- read_sf (file.path(out, "municipalities_cerrado_biome","municipalities_cerrado_biome_wgs84.shp"))
-states <- read_rds (file.path(out, "ibge","StatesBR_WGS84.rds"))
+munis <- read_sf (file.path(out, "municipalities_cerrado_biome","municipalities_cerrado_biome_wgs84.shp")) %>% st_transform(crs=4326)
+states <- read_rds (file.path(out, "ibge","StatesBR_WGS84.rds"))%>% st_transform(crs=4326)
 
 munis <- munis %>% ms_simplify()
 states <- states %>% ms_simplify()
-matop <- read_rds ( file.path(out, "Matopiba","Matopiba_WGS84.rds"))
-matop <- matop %>% mutate(Matopiba="")
+matop <- read_rds ( file.path(out, "Matopiba","Matopiba_WGS84.rds"))%>% st_transform(crs=4326)
+matop <- matop %>% mutate(Matopiba="") %>% ms_simplify()
 munis_land_p <- munis %>% left_join(land_p, by = c("cd_geocmu"="Município (Código)") )
 
-munis_land_p <- munis_land_p %>% mutate(land_p_perc10 =if_else(land_p_perc >= 20,20, land_p_perc))
+#munis_land_p <- munis_land_p %>% mutate(land_p_perc10 =if_else(land_p_perc >= 20,20, land_p_perc))
 bb <- st_bbox(munis_land_p)
 
 gg_title<- ggplot ()+
-  geom_sf(data=munis_land_p, aes(fill=land_p_perc10), color=NA)+
-  geom_sf(data=states, color = "grey60", fill = NA, size=0.5)+
-  geom_sf(data=matop, aes(color=Matopiba), fill = NA, size=0.7, show.legend = 'line')+
-  scale_fill_viridis_c(name="Properties without formal \nland title or rented %", limits=c(0,20),
-                       breaks= c(0,5,10,15,20),labels=c("0","5","10","15", ">=20"))+
+  geom_sf(data=munis_land_p, aes(fill=land_p_perc), color=NA)+
+  geom_sf(data=states, color = "black", fill = NA, size=0.5, lty="longdash")+
+  geom_sf(data=matop, color="white", fill = NA, size=1.6)+
+  geom_sf(data=matop, aes(color=Matopiba), fill = NA, size=1.2, show.legend = 'line')+
+  scale_color_manual (values="#a65628")+
+  scale_fill_stepsn(name="Properties without formal \nland title or rented %", 
+                    colors= c("#edf8fb", "#9ebcda", "#8c6bb1", "#6e016b"), 
+                    breaks=seq(0,20, by=5), limit=c(0,20), labels=c("0","5","10","15", ">=20"))+
+  # scale_fill_viridis_c(name="Properties without formal \nland title or rented %", limits=c(0,20),
+  #                      breaks= c(0,5,10,15,20),labels=c("0","5","10","15", ">=20"))+
   #scale_fill_binned(breaks=c(0,1,5,10,20,40,100),type="viridis",  name="Farms ocupied or\nproducers without land in %")+
   coord_sf(xlim = c(bb[1], bb[3]), ylim = c(bb[2], bb[4]), expand = FALSE) +
   theme_bw()+
