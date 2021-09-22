@@ -4,5 +4,5 @@ Quick descriptions: I loaded all data from sidra ('Sidra_data.R'), made maps for
 data folder: 
 
 
-![LULC](ggplots/panel_1_large_LULC.png)
+![LULC](ggplots/panel_1_large_maps.png)
 ![Indicators](ggplots/panel_2_small_maps.png)
