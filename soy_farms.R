@@ -36,7 +36,7 @@ gg_soyfarms<- ggplot ()+
   geom_sf(data=states, color = "black", fill = NA, size=0.5, lty="longdash")+#color = "grey60", fill = NA, size=0.5)+
   geom_sf(data=matop, color="white", fill = NA, size=1.6)+
   geom_sf(data=matop, aes(color=Matopiba), fill = NA, size=1.2, show.legend = 'line')+
-  scale_color_manual (values="#a65628")+
+  scale_color_manual (values="#FF6700")+
   scale_fill_stepsn(name="Soy farms\nin %", colors= c("#edf8fb", "#9ebcda", "#8c6bb1", "#6e016b"), breaks=seq(0,100, by=25), limit=c(0,100))+
   
 # scale_fill_viridis_c( name="Soy farms\nin %", limits=c(0,100))+

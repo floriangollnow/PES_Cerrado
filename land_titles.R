@@ -64,7 +64,7 @@ gg_title<- ggplot ()+
   geom_sf(data=states, color = "black", fill = NA, size=0.5, lty="longdash")+
   geom_sf(data=matop, color="white", fill = NA, size=1.6)+
   geom_sf(data=matop, aes(color=Matopiba), fill = NA, size=1.2, show.legend = 'line')+
-  scale_color_manual (values="#a65628")+
+  scale_color_manual (values="#FF6700")+
   scale_fill_stepsn(name="Properties without formal \nland title or rented %", 
                     colors= c("#edf8fb", "#9ebcda", "#8c6bb1", "#6e016b"), 
                     breaks=seq(0,20, by=5), limit=c(0,20), labels=c("0","5","10","15", ">=20"))+

@@ -1,6 +1,4 @@
-# tenure
 
-#average income
 library(tidyverse)
 library(sf)
 library (ggplot2)
@@ -36,7 +34,7 @@ gg_soy_area<- ggplot ()+
   geom_sf(data=states, color = "black", fill = NA, size=0.5, lty="longdash")+#color = "grey60", fill = NA, size=0.5)+
   geom_sf(data=matop, color="white", fill = NA, size=1.6)+
   geom_sf(data=matop, aes(color=Matopiba), fill = NA, size=1.2, show.legend = 'line')+
-  scale_color_manual (values="#a65628")+
+  scale_color_manual (values="#FF6700")+
   #scale_fill_viridis_c( name="Soy area\nin %", limits=c(0,100))+
   #scale_fill_viridis_b( name="Soy area\nin %", limits=c(0,100), option = "D")+
   scale_fill_stepsn(name="Soy area\nin %", colors= c("#edf8fb", "#9ebcda", "#8c6bb1", "#6e016b"), breaks=seq(0,100, by=25), limit=c(0,100))+
@@ -84,7 +82,7 @@ gg_soy_farm_size<- ggplot ()+
   geom_sf(data=states, color = "black", fill = NA, size=0.5, lty="longdash")+#color = "grey60", fill = NA, size=0.5)+
   geom_sf(data=matop, color="white", fill = NA, size=1.6)+
   geom_sf(data=matop, aes(color=Matopiba), fill = NA, size=1.2, show.legend = 'line')+
-  scale_color_manual (values="#a65628")+
+  scale_color_manual (values="#FF6700")+
   scale_fill_stepsn(name="Soy area by farm\nin kha", colors= c("#edf8fb", "#bfd3e6", "#9ebcda", "#8c96c6","#8c6bb1","#88419d","#6e016b"),
                     breaks=seq(0,7, by=1), limit=c(0,7))+
   

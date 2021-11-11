@@ -24,9 +24,9 @@ gg_income<- ggplot ()+
   geom_sf(data=states, color = "black", fill = NA, size=0.5, lty="longdash")+#color = "grey60", fill = NA, size=0.5)+
   geom_sf(data=matop, color="white", fill = NA, size=1.6)+
   geom_sf(data=matop, aes(color=Matopiba), fill = NA, size=1.2, show.legend = 'line')+
-  scale_color_manual (values="#a65628")+
-  scale_fill_stepsn(name="Mean monthly income\nin 1000 BRL", colors= c("#edf8fb", "#bfd3e6", "#9ebcda", "#8c96c6","#8856a7","#810f7c"),
-                    breaks=seq(0,6, by=1), limit=c(0,6))+
+  scale_color_manual (values="#FF6700")+
+  scale_fill_stepsn(name="Mean monthly income\nin 1000 BRL", colors= c("#e0ecf4", "#9ebcda", "#8c96c6", "#8c6bb1","#88419d","#810f7c"),
+                    breaks=c(0,1,2,3,4,5,6), limit=c(0,6))+
   
 
   # geom_sf(data=states, color = "grey60", fill = NA, size=0.5)+

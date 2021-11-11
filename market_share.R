@@ -27,14 +27,19 @@ munis_zdc_p <- munis %>% left_join(trase_2018_zdc, by = c("cd_geocmu"="GEOCODE")
 
 bb <- st_bbox(munis_zdc_p)
 
+states_cropped <- st_crop(states, bb)
+states_cropped <- states_cropped %>% filter (State_abb!="ES", State_abb!="RO")
+
 gg_zdc<- ggplot ()+
   geom_sf(data=munis_zdc_p, aes(fill=ZDC_perc),color=NA)+#ZDC_perc
   geom_sf(data=states, color = "black", fill = NA, size=0.5, lty="longdash")+#color = "grey60", fill = NA, size=0.5)+
   geom_sf(data=matop, color="white", fill = NA, size=1.6)+
   geom_sf(data=matop, aes(color=Matopiba), fill = NA, size=1.2, show.legend = 'line')+
-  scale_color_manual (values="#a65628")+
+  scale_color_manual (values="#FF6700")+
   #scale_fill_viridis_c( name="ZDC market\nshare in %")+
   scale_fill_stepsn(name="ZDC market\nshare in %", colors= c("#edf8fb", "#9ebcda", "#8c6bb1", "#6e016b"), breaks=seq(0,100, by=25), limit=c(0,100))+
+  geom_sf_label(data=states_cropped, aes(label = State_abb),nudge_x = c(0,0,0,0,0,0,0,-1.8,0,-1.2,0,0,0,0), nudge_y = c(0,0,0,0,0,0,0,0.8,0,-1.5,0,0,0,0),alpha=0.6)+
+  
   coord_sf(xlim = c(bb[1], bb[3]), ylim = c(bb[2], bb[4]), expand = FALSE) +
   theme_bw()+
   theme(legend.position = "top", axis.title.x=element_blank(),axis.title.y=element_blank())+

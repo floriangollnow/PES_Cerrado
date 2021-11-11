@@ -35,16 +35,43 @@ matop <- matop %>% mutate(Matopiba="")
 #deforestationsoy <- raster()
 #main_lu
 main_lu <- raster(file.path(raster_dir,"mapbiomas_SoyDeforestation_1000_v5.tif"))
+soy_suit <- raster (file.path(raster_dir,"mapbiomas_FFSS_GAEZapt_Cerrado_1000_v5.tif"))
+#main_lu <- crop(main_lu, boundary)
+#soy_suit<- crop (soy_suit, boundary)
+#soy_suit<- setExtent(soy_suit, extent(main_lu))
+#extent(main_lu)== extent(soy_suit)
 
-main_lu<- aggregate(main_lu,5,fun=max)
+
+soy_suit <- reclassify(soy_suit, rcl=matrix(c(0,NA,1,4,2,5,1,NA,4,1,5,3,6,NA,7,NA,8,NA,9,NA),byrow = T, ncol = 2 ))
+main_lu <- reclassify(main_lu, rcl=matrix(c(0,NA,1,NA,2,2),byrow = T, ncol = 2 ))
+main_lu<- aggregate(main_lu,4,fun=max)
 main_lum <- mask(main_lu, boundary)
 
+#soy_suit<- aggregate(soy_suit,5,fun=min)
+#soy_suit_m <- mask(soy_suit, boundary)
+
+
 main_lu <-main_lum
-#plot(soym)
+#soy_suit <- soy_suit_m
+main_lu <- mask(main_lu, boundary)
+soy_suit <- mask(soy_suit, boundary)
+
+main_lu<- resample( main_lu,soy_suit, method='ngb')
+extent(main_lu)== extent(soy_suit)
+test1 <- c(1,3,4,5,6,7)
+test2 <- c(NA,2,NaN,NA,NaN,NA)
+  
+  
+fq1 <- function(x, y){ #combine  soy deforestation and soy suit, highlighting soy-deforestation by larger pixel size
+   ifelse(!is.na(y), y,x)}
+fq1(test1, test2)
+main_lu <- overlay(x=soy_suit, y=main_lu, fun=fq1)
+#plot(main_lu2)
+ #plot(soym)
 main_lu.coord<- xyFromCell(main_lu, seq_len(ncell(main_lu)))
 main_lu.df <- as.data.frame(getValues(main_lu))
 names(main_lu.df)<-"value"
-main_lu.df$value <- factor(main_lu.df$value, levels = c("1","2"))
+main_lu.df$value <- factor(main_lu.df$value, levels = c("1","2","3","4","5"))
 main_lu.df1 <- cbind(main_lu.coord, main_lu.df)
 
 ##crop state names
@@ -54,15 +81,16 @@ states_cropped <- states_cropped %>% filter (State_abb!="ES", State_abb!="RO")
 gg_lu <- ggplot() +
   geom_sf (data=cerrado, fill="grey90", color=NA)+
   geom_tile(data=main_lu.df1,  aes(x,y, fill = value)) +
-  scale_fill_manual(values = c("1"="#c59ff4", "2"="#ca0020"), na.value=NA,# c("1"="#c59ff4", "2"="#e66101")
-                    name = "LUCC", labels = c("Soy", "Soy-\nDeforestation"), na.translate=FALSE)+
+  scale_fill_manual(values = c("1"="#c59ff4", "2"="#d01c8b", "3"="#FFFFB2","4"="#7fbc41", "5"="#129912" ), na.value=NA,# c("1"="#c59ff4", "2"="#e66101")"#f1b6da"
+                    name = "LUCC", labels = c("Soy", "Soy-\nDeforestation","Pasture" , "Forest", "Soy-suitable\nForest"), na.translate=FALSE)+
   geom_sf(data=states,color = "black", fill = NA, size=0.5, lty="longdash")+
   #geom_sf(data=pa_ind, aes (color=Designation ),alpha=0.5) +
   #scale_color_manual  (values=c("Indigenous"="#fdb863" , "PA"="#e66101"))+#"#fc8d62", "#e78ac3"
   geom_sf(data=matop, color="white", fill = NA, size=1.6)+
-  geom_sf(data=matop, aes(lty=Matopiba), color="#a65628",fill = NA, size=1.2)+#"#7570b3"#5e3c99
-  geom_sf(data=sf::st_point_on_surface(states_cropped),colour = "white",alpha=0.7, size = 10)+
-  geom_sf_text(data=states_cropped, aes(label = State_abb),fun.geometry = st_point_on_surface)+
+  geom_sf(data=matop, aes(lty=Matopiba), color="#FF6700",fill = NA, size=1.2)+#"#7570b3"#5e3c99
+  # geom_sf(data=sf::st_point_on_surface(states_cropped),colour = "white",alpha=0.7, size = 10)+
+  # geom_sf_text(data=states_cropped, aes(label = State_abb),fun.geometry = st_point_on_surface)+
+  geom_sf_label(data=states_cropped, aes(label = State_abb),nudge_x = c(0,0,0,0,0,0,0,-1.8,0,-1.2,0,0,0,0), nudge_y = c(0,0,0,0,0,0,0,0.8,0,-1.5,0,0,0,0),alpha=0.6)+
   coord_sf(xlim = c(bb[1], bb[3]), ylim = c(bb[2], bb[4]), expand = FALSE)+
   theme_bw()+
   theme(legend.position = "right", axis.title.x=element_blank(),axis.title.y=element_blank())# ,legend.box="vertical", legend.box="vertical",
@@ -70,7 +98,7 @@ gg_lu <- ggplot() +
 
 write_rds(gg_lu, file.path(out,"ggplots","gg_soydef.rds"))
 ggsave(file.path(out,"gg_soydef_test.png"))
-#gg_lu
+# gg_lu
 #1 Forest 
 #2 Grassland
 #3 Croplands

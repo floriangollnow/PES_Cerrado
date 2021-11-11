@@ -12,7 +12,7 @@ out <- '/Users/floriangollnow/Dropbox/ZDC_project/PaperRachael/Data'
 #spatial
 boundary <- (read_sf (file.path(out, "cerrado_border","limite_cerrado_wgs84.shp")))
 munis <- read_sf (file.path(out, "municipalities_cerrado_biome","municipalities_cerrado_biome_wgs84.shp"))%>% st_transform(crs= 4326)
-states <- read_rds (file.path(out, "ibge","StatesBR_WGS84.rds"))%>% st_transform(crs= 9001)
+states <- read_rds (file.path(out, "ibge","StatesBR_WGS84.rds"))#%>% st_transform(crs= 9001)
 mask_file <- read_rds(file.path (raster_dir , "mask_file.rds")) %>% filter (mask==0) %>% st_zm ()
 #pa <- read_sf (file.path(out, "conservation_units_cerrado_biome","conservation_units_cerrado_biome_wgs84.shp")) %>% mutate(Designation="PA") %>% dplyr::select (Designation)
 #ind <- read_sf (file.path(out, "indigeneous_area_cerrado_biome","indigeneous_area_cerrado_biome_wgs84.shp"))%>% mutate(Designation="Indigenous") %>% dplyr::select(Designation)
@@ -26,43 +26,44 @@ matop <- read_rds ( file.path(out, "Matopiba","Matopiba_WGS84.rds"))%>% st_trans
 matop <- matop %>% mutate(Matopiba="")
 
 #main_lu
-rents <- raster(file.path(raster_dir,"rent.tif"))
+#rents <- raster(file.path(raster_dir,"rent.tif"))
 rents_terr <- rast (file.path(raster_dir,"rent.tif"))
 
-boundary_trans <- boundary %>% st_transform  (crs=st_crs(rents))
-mask_file_trans <- mask_file %>% st_transform ( crs=st_crs(rents))
+boundary_trans <- boundary %>% st_transform  (crs=crs(rents_terr))
+mask_file_trans <- mask_file %>% st_transform ( crs=crs(rents_terr))
 mask_file_trans <- mask_file_trans %>% st_crop(st_bbox(boundary_trans))
 #main_lu<- aggregate(main_lu,max)
-rents <-  crop (rents, extent(boundary_trans))
-rents_m1<- raster::mask(rents, boundary_trans)
-rents_m2<- raster::mask(rents_m1, mask_file)
+rents_terr <-  terra::crop (rents_terr, extent(boundary_trans))
+rents_m1<- terra::mask(rents_terr, vect(boundary_trans))
+rents_m2<- terra::mask(rents_m1, vect(mask_file))
 
 rents_m <- rents_m2
 
-rents_m <- raster::aggregate(rents_m,2, fun=mean)
+rents_m <- terra::aggregate(rents_m,2, fun=mean)
 rents_m_p <- projectRaster (rents_m, crs=crs(boundary))
 #convert to ha
-rents_ha <-(rents_m_p/6.25)-870
+rents_ha <-(rents_m/6.25)-870
 rents_ha[rents_ha<0] <- 0
 plot(rents_ha)
 plot (boundary, add=TRUE)
+rents_ha <- terra::project (rents_ha, "epsg:4326")
 #plot(soym)
 rents.coord<- xyFromCell(rents_ha, seq_len(ncell(rents_ha)))
-rents.df <- as.data.frame(getValues(rents_ha))
+rents.df <- as.data.frame(terra::values(rents_ha))
 names(rents.df)<-"value"
 rents.df1 <- cbind(rents.coord, rents.df)
 
 gg_rents <- ggplot() +
   geom_sf(data=munis, color = NA, fill = "grey50", size=0.5)+
   geom_tile(data=rents.df1,  aes(x,y, fill = value)) +
-  scale_fill_stepsn(name="Soy estimated profit\nin US$/ha", 
+  scale_fill_stepsn(name="Soy estimated profit\nin US$/ha",
                     colors= c("#f7fcfd", "#e0ecf4", "#bfd3e6", "#9ebcda","#8c96c6","#8c6bb1","#88419d","#6e016b"),
                     breaks=seq(0,800, by=200), limit=c(0,800), na.value = NA)+
   #scale_fill_viridis_c( name="Soy estimated profit\nin US$/ha", na.value = NA)+
   geom_sf(data=states, color = "black", fill = NA, size=0.5, lty="longdash")+#color = "grey60", fill = NA, size=0.5)+
   geom_sf(data=matop, color="white", fill = NA, size=1.6)+
   geom_sf(data=matop, aes(color=Matopiba), fill = NA, size=1.2, show.legend = 'line')+
-  scale_color_manual (values="#a65628")+
+  scale_color_manual (values="#FF6700")+
   coord_sf(xlim = c(bb[1], bb[3]), ylim = c(bb[2], bb[4]), expand = FALSE) +
   theme_bw()+
   theme(legend.position = "top", axis.title.x=element_blank(),axis.title.y=element_blank())+
