@@ -46,8 +46,8 @@ matop <- matop %>% mutate(Matopiba="")
 main_lu <- raster(file.path(raster_dir,"mapbiomas_FFSS_GAEZapt_Cerrado_1000_v5.tif"))
 
 main_lu <- reclassify(main_lu, rcl=matrix(c(0,NA,1,NA,2,NA,3,NA,4,NA,5,1,6,NA,7,NA,8,NA,9,NA),byrow = T, ncol = 2 ))
+#main_lu<- aggregate(main_lu,2,fun=max)
 
-#main_lu<- aggregate(main_lu,max)
 main_lum <- mask(main_lu, boundary)
 
 main_lu <-main_lum
@@ -101,7 +101,7 @@ gg_lu <- ggplot() +
   theme(legend.position = "right", axis.title.x=element_blank(),axis.title.y=element_blank())# ,legend.box="vertical", legend.box="vertical",
 #gg_lu
 
-#write_rds(gg_lu, file.path(out,"ggplots","gg_lu.rds"))
+write_rds(gg_lu, file.path(out,"ggplots","gg_lu10.rds"))
 ggsave(file.path(out,"gg_lu_test10.png"))
 #gg_lu
 #1 Forest 

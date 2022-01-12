@@ -7,8 +7,8 @@ library(ggpubr)
 plot.dir  <- "/Users/floriangollnow/Dropbox/ZDC_project/PaperRachael/Data/ggplots" 
 dir(plot.dir)
 
-gg1<-read_rds(file.path(plot.dir, "gg_lu.rds"))#""#"gg_income.rds"
-gg2 <- read_rds( file.path(plot.dir,"gg_soydef.rds"))
+gg1<-read_rds(file.path(plot.dir, "gg_lu10.rds"))#""#"gg_income.rds"
+gg2 <- read_rds( file.path(plot.dir,"gg_soydef10.rds"))
 gg3<-read_rds(file.path(plot.dir, "gg_zdc.rds"))
 gg4<-read_rds(file.path(plot.dir, "gg_income.rds") )  
 
