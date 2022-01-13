@@ -26,29 +26,28 @@ matop <- matop %>% mutate(Matopiba="")
 
 # read raster data
 # soy deforestation
-main_lu <- raster(file.path(raster_dir,"mapbiomas_SDEF_Cerrado_500_v5.tif"))
+soy_def <- raster(file.path(raster_dir,"mapbiomas_SDEF_Cerrado_500_v5.tif"))
 # lu
-soy_suit <- raster (file.path(raster_dir,"mapbiomas_FFSS_GAEZapt_Cerrado_1000_v5.tif"))
+lu_suit <- raster (file.path(raster_dir,"mapbiomas_FFSS_GAEZapt_Cerrado_1000_v5.tif"))
 #//1 Forest, 2 Suitable Forest, 3 Pasture, 4Crop,8 grassland, 9 water, 5 soy , 6 soy-def 00-10,7 soy-def 11-18 
 
 # reclassify lu data
-soy_suit <- reclassify(soy_suit, rcl=matrix(c(0,NA, 1,4, 2,5, 3,3, 4,NA, 5,1, 6,NA, 7,NA, 8,NA, 9,NA),byrow = T, ncol = 2 ))
-main_lu <- reclassify(main_lu, rcl=matrix(c(0,NA,1,2,2,2),byrow = T, ncol = 2 ))
-main_lu<- aggregate(main_lu,4,fun=max)# aggregate soy-defroestation data, to increas visibility
-main_lum <- mask(main_lu, boundary)
-main_lu <-main_lum
+lu_suit <- reclassify(lu_suit, rcl=matrix(c(0,NA, 1,4, 2,5, 3,3, 4,NA, 5,1, 6,NA, 7,NA, 8,NA, 9,NA),byrow = T, ncol = 2 ))
+soy_def <- reclassify(soy_def, rcl=matrix(c(0,NA,1,2,2,2),byrow = T, ncol = 2 ))
+soy_def<- aggregate(soy_def,4,fun=max)# aggregate soy-defroestation data, to increas visibility
+
 # mask rasters to Cerrado area
-main_lu <- mask(main_lu, boundary)
-soy_suit <- mask(soy_suit, boundary)
+soy_def <- mask(soy_def, boundary)
+lu_suit <- mask(lu_suit, boundary)
 # resample data to same resolution
-main_lu<- resample( main_lu,soy_suit, method='ngb')
-extent(main_lu)== extent(soy_suit)
+soy_def <- resample( soy_def,lu_suit, method='ngb')
+extent(soy_def) == extent(lu_suit)
 
 #combine  soy deforestation and soy suit, highlighting soy-deforestation by larger pixel size
 fq1 <- function(x, y){ 
    ifelse(!is.na(y), y,x)}
-fq1(test1, test2)
-main_lu <- overlay(x=soy_suit, y=main_lu, fun=fq1)
+
+main_lu <- overlay(x=lu_suit, y=soy_def, fun=fq1)
 
 # prepare data for ggplot
 main_lu.coord<- xyFromCell(main_lu, seq_len(ncell(main_lu)))
