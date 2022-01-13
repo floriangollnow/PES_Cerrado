@@ -1,3 +1,4 @@
+# preparing global inset map
 library(raster)
 library(rasterVis)
 library(sf)
@@ -20,7 +21,6 @@ bb_st <- st_as_sfc(st_bbox(boundary))
 gg_world<- ggplot() +
   geom_sf(data=world)+
   geom_sf(data=bb_st, fill=NA, color="red", size=1) +
-  #coord_sf(xlim = c(bb[1], bb[3]), ylim = c(bb[2], bb[4]))+
   theme_minimal()
 gg_world
 write_rds(gg_world, file.path(out,"ggplots","gg_world.rds"))

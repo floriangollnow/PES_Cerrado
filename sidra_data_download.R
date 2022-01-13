@@ -1,9 +1,8 @@
 #data download  sidra:
-
 library(sidrar)
 library(tidyverse)
+#directory
 out <- '/Users/floriangollnow/Dropbox/PaperRachael/Data/sidra'
-
 
 #income ----
 info_sidra(4009, wb=FALSE)
