@@ -8,7 +8,7 @@ Florian Gollnow
 ## Description   
 ### data     
 - IBGE data was downloaded from sidra ('sidra_data.R')   
-- Trade data was derived from [trase.earth](https://www.trase.earth/) and prepared in [Gollnow et al. 2022 preprint] (https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4006677)  
+- Trade data was derived from [trase.earth](https://www.trase.earth/) and prepared in [Gollnow et al. 2022 preprint](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4006677)  
 - Mapbiomas LU-data can be found [here](https://mapbiomas.org/) and was prepared separately in GEE   
 - Rent data was prepared by Rodrigo et al. (in prep)   
 - Spatial admin data was derived from [IBGE](https://geoftp.ibge.gov.br/) and [MMA](https://www.gov.br/icmbio/pt-br/servicos/geoprocessamento/mapa-tematico-e-dados-geoestatisticos-das-unidades-de-conservacao-federais)   
