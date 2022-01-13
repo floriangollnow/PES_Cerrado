@@ -7,7 +7,7 @@ Florian Gollnow
 
 ## Description   
 ### data     
-- IBGE data was downloaded from sidra ('sidra_data_dwonload.R')   
+- IBGE data was downloaded from [sidra](https://sidra.ibge.gov.br/home/pms/brasil) ('sidra_data_dwonload.R')   
 - Trade data was derived from [trase.earth](https://www.trase.earth/) and prepared in [Gollnow et al. 2022 preprint](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4006677)  
 - Mapbiomas LU-data can be found [here](https://mapbiomas.org/) and was prepared separately in GEE   
 - Rent data was prepared by Rodrigo et al. (in prep)   
