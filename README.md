@@ -1,6 +1,6 @@
 
 # PES Cerrado
-Replication code for maps in: ___R.D. Garrett, J. Grabs, F. Cammelli, F. Gollnow, S.A. Levy. Should payments for environmental services be used to implement zero-deforestation supply chain policies? The case of soy in the Brazilian Cerrado___
+Replication code for maps in: [___R.D. Garrett, J. Grabs, F. Cammelli, F. Gollnow, S.A. Levy. Should payments for environmental services be used to implement zero-deforestation supply chain policies? The case of soy in the Brazilian Cerrado___](https://doi.org/10.1016/j.worlddev.2022.105814)
 
 ## Code author   
 Florian Gollnow
